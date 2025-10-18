@@ -6,7 +6,7 @@ def main():
     
     grafo = GrafoAeropuertos()
     
-    # Múltiples rutas posibles para encontrar el CSV
+    # gabriel mk hazme el 2 ahí de verificar cual de estas rutas es la correcta, malparido csv
     posibles_rutas = [
         'flights_final.csv',                                      # Misma carpeta
         '../flights_final.csv',                                   # Carpeta padre
