@@ -4,14 +4,55 @@ import os
 def main():
     print("=== SISTEMA DE AEROPUERTOS - GABO Y VALEN ===")
     
-    #luis camilo le rompe el anillo a chiqui
     grafo = GrafoAeropuertos()
     
+    # Múltiples rutas posibles para encontrar el CSV
+    posibles_rutas = [
+        'flights_final.csv',                                      # Misma carpeta
+        '../flights_final.csv',                                   # Carpeta padre
+        'data/flights_final.csv',                                 # Subcarpeta data
+        '../data/flights_final.csv',                              # Padre/data
+        'Lab2-Airport-main/flights_final.csv',                    # Subcarpeta Lab2-Airport-main
+        'Lab2-Airport-main/data/flights_final.csv',               # Subcarpeta/data
+    ]
+    
+    archivo_csv = None
+    for ruta in posibles_rutas:
+        if os.path.exists(ruta):
+            archivo_csv = ruta
+            print(f"CSV encontrado en: {ruta}")
+            break
+    
+    if not archivo_csv:
+        print("No se pudo encontrar el archivo flights_final.csv")
+        print("Buscando archivos CSV en el directorio actual...")
+        
+        # Buscar recursivamente
+        for root, dirs, files in os.walk('.'):
+            for file in files:
+                if file.endswith('.csv'):
+                    ruta_completa = os.path.join(root, file)
+                    print(f"CSV encontrado: {ruta_completa}")
+                    # Preguntar si usar este archivo
+                    usar = input(f"¿Usar este archivo? (s/n): ").strip().lower()
+                    if usar == 's':
+                        archivo_csv = ruta_completa
+                        break
+            if archivo_csv:
+                break
+        
+        if not archivo_csv:
+            print("❌ No se encontró ningún archivo CSV")
+            return
+    
     # Cargar datos
-    if not grafo.cargar_datos('flights_final.csv'):
+    if not grafo.cargar_datos(archivo_csv):
         return
     
-    # Menú principal
+    # Resto de tu menú...
+    menu_principal(grafo)
+
+def menu_principal(grafo):
     while True:
         print("\n" + "="*60)
         print("                  MENÚ PRINCIPAL")
@@ -30,7 +71,7 @@ def main():
         elif opcion == '2':
             grafo.peso_arbol_expansion_minima()
         elif opcion == '3':
-            codigo = input("Código del aeropuerto (ej: CDG, JFK, LAX): ").strip().upper()
+            codigo = input("Código del aeropuerto (ej: ATL, JFK, LAX): ").strip().upper()
             grafo.aeropuertos_mas_lejanos(codigo)
         elif opcion == '4':
             origen = input("Código del aeropuerto origen: ").strip().upper()
