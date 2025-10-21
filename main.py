@@ -2,54 +2,44 @@ from grafo_aereopuertos import GrafoAeropuertos
 import os
 
 def main():
-    print("=== SISTEMA DE AEROPUERTOS - GABO Y VALEN ===")
+    print("=== SISTEMA DE AEROPUERTOS - VALEN Y GABO ===")
     
     grafo = GrafoAeropuertos()
-    
-    # gabriel mk hazme el 2 ahí de verificar cual de estas rutas es la correcta, malparido csv
-    posibles_rutas = [
-        'flights_final.csv',                                      # Misma carpeta
-        '../flights_final.csv',                                   # Carpeta padre
-        'data/flights_final.csv',                                 # Subcarpeta data
-        '../data/flights_final.csv',                              # Padre/data
-        'Lab2-Airport-main/flights_final.csv',                    # Subcarpeta Lab2-Airport-main
-        'Lab2-Airport-main/data/flights_final.csv',               # Subcarpeta/data
-    ]
-    
+
+    # Verificación simple del archivo CSV, no es necesario agregar otras rutas
+    # , pues el archivo csv está en la misma carpeta
+    nombre_csv = "flights_final.csv"
     archivo_csv = None
-    for ruta in posibles_rutas:
-        if os.path.exists(ruta):
-            archivo_csv = ruta
-            print(f"CSV encontrado en: {ruta}")
-            break
-    
-    if not archivo_csv:
-        print("No se pudo encontrar el archivo flights_final.csv")
-        print("Buscando archivos CSV en el directorio actual...")
-        
-        # Buscar recursivamente
-        for root, dirs, files in os.walk('.'):
+
+    if os.path.exists(nombre_csv):
+        archivo_csv = nombre_csv
+        # en caso de que encontremos el csv, se muestra TOODA la ruta
+        print(f"CSV encontrado en: {os.path.abspath(nombre_csv)}")
+    else:
+        print("No se encontró el archivo flights_final.csv en el directorio main, paila")
+        print("Buscando archivos CSV en subcarpetas...")
+
+        for root, _, files in os.walk('.'):
             for file in files:
                 if file.endswith('.csv'):
                     ruta_completa = os.path.join(root, file)
-                    print(f"CSV encontrado: {ruta_completa}")
-                    # Preguntar si usar este archivo
-                    usar = input(f"¿Usar este archivo? (s/n): ").strip().lower()
+                    print(f"Encontrado: {ruta_completa}")
+                    usar = input("¿Usar este archivo? (s/n): ").strip().lower()
                     if usar == 's':
                         archivo_csv = ruta_completa
                         break
             if archivo_csv:
                 break
-        
+
         if not archivo_csv:
-            print("❌ No se encontró ningún archivo CSV")
+            print("No se encontró ningún archivo CSV válido.")
             return
-    
-    # Cargar datos
+
+    # === Cargamos los datos del grafo ===
     if not grafo.cargar_datos(archivo_csv):
         return
     
-    # Resto de tu menú...
+    # === Mostramos el menú principal ===
     menu_principal(grafo)
 
 def menu_principal(grafo):
@@ -78,10 +68,10 @@ def menu_principal(grafo):
             destino = input("Código del aeropuerto destino: ").strip().upper()
             grafo.camino_minimo(origen, destino)
         elif opcion == '5':
-            print("¡Hasta luego!")
+            print("Hasta luego cachón!")
             break
         else:
-            print("Opción no válida")
+            print("Opción inválida 😂😂😂, intente nuevamente.")
 
 if __name__ == "__main__":
     main()
